@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class WordEntity implements Serializable {
@@ -16,7 +17,11 @@ public class WordEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
+    @NotNull
     private String wordText;
+    @NotNull
+    private String translation;
+    private String description;
 
     public WordEntity() {
 
@@ -42,4 +47,19 @@ public class WordEntity implements Serializable {
         return id;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public String getTranslation() {
+        return translation;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setTranslation(String translation) {
+        this.translation = translation;
+    }
 }
