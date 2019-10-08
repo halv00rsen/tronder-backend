@@ -1,6 +1,6 @@
 package org.tronder.words.controller;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,25 +8,24 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.tronder.words.model.WordEntity;
-import org.tronder.words.repository.WordRepository;
+import org.tronder.words.model.User;
+import org.tronder.words.repository.UserRepository;
 
 @RestController
-@RequestMapping("/word")
-public class WordController {
+@RequestMapping("/user")
+public class UsersController {
 
     @Autowired
-    private WordRepository repository;
+    private UserRepository repository;
 
     @GetMapping("")
-    public Iterable<WordEntity> getAllWords() {
+    public Iterable<User> getUser() {
         return repository.findAll();
     }
 
     @PostMapping("")
-    public WordEntity saveWord(@RequestBody @NotNull WordEntity word) {
-        repository.save(word);
-        return word;
+    public User addUser(@RequestBody @Valid User user) {
+        return user;
     }
 
 }

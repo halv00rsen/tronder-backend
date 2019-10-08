@@ -15,8 +15,17 @@ import org.tronder.words.model.User;
 @RequestMapping("")
 public class LoginController {
 
-    @PostMapping("/login")
+    @PostMapping("/username")
     @ResponseBody
+    public User login(Authentication authentication, HttpServletResponse response) {
+        if (authentication != null) {
+            return new User(authentication.getName());
+        }
+        response.setStatus(400);
+        return null;
+    }
+
+    @PostMapping("/login")
     public User login(Authentication authentication) {
         return new User(authentication.getName());
     }
