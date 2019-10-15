@@ -18,11 +18,18 @@ public class JwtParser {
 
     public UserData parseTokenToData(String token) {
         Claims claims = getGeneratedClaimsFromToken(token);
+        if (!isIdToken(claims)) {
+            throw new IllegalArgumentException("Expected ID token, got something else");
+        }
         UserData userData = new UserData();
         userData.setSub(getSubFromToken(claims));
         userData.setName(getNameFromToken(claims));
         userData.setEmail(getEmailFromToken(claims));
         return userData;
+    }
+
+    private boolean isIdToken(Claims claims) {
+        return "id".equals(claims.get("token_use", String.class));
     }
 
     private String getEmailFromToken(Claims claims) {
