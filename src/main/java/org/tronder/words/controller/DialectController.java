@@ -32,9 +32,6 @@ public class DialectController {
 
     @GetMapping("")
     public Iterable<Dialect> getAllDialects(Authentication auth) {
-        System.out.println(getUserData(auth).getEmail());
-        System.out.println(getUserData(auth).getSub());
-        System.out.println(getUserData(auth).getName());
         return dialectService.getDialects();
     }
 

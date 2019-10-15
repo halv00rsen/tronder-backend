@@ -1,9 +1,14 @@
 package org.tronder.words.model;
 
+import javax.validation.constraints.NotNull;
+
 public class UserData {
 
+    @NotNull
     private String email;
+    @NotNull
     private String name;
+    @NotNull
     private String sub;
 
 
