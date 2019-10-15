@@ -40,11 +40,4 @@ public class LoginController {
         }
         response.setStatus(401);
     }
-
-    // @RequestMapping(value = "/username", method = RequestMethod.GET)
-    // @ResponseBody
-    // public String currentUserName(Authentication authentication) {
-    //     return authentication.getName();
-    // }
-
 }
