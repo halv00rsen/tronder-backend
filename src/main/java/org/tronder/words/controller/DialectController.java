@@ -49,17 +49,21 @@ public class DialectController implements Serializable {
     }
 
     @GetMapping("/{dialectId}/word")
-    public List<WordEntity> getWordsInDialect(@PathVariable int dialectId) {
-        return dialectService.getWordsInDialect(dialectId);
+    public List<WordEntity> getWordsInDialect(@PathVariable int dialectId, AuthenticationUtil auth) {
+        String userSub = "";
+        if (auth.isAuthenticated()) {
+            userSub = auth.getUserData().getSub();
+        }
+        return dialectService.getWordsInDialect(dialectId, userSub);
     }
 
     @PostMapping("/{dialectId}/word")
-    public WordEntity addNewWordToDialect(@PathVariable int dialectId, @RequestBody WordDTO word) {
+    public WordEntity addNewWordToDialect(@PathVariable int dialectId, @RequestBody WordDTO word, AuthenticationUtil auth) {
         WordEntity wordEntity = new WordEntity();
         wordEntity.setDescription(word.getDescription());
         wordEntity.setTranslation(word.getTranslation());
         wordEntity.setWordText(word.getWordText());
-        return dialectService.addWordToDialect(dialectId, wordEntity);
+        return dialectService.addWordToDialect(dialectId, wordEntity, auth.getUserData().getSub());
     }
 
 }

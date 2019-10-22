@@ -3,9 +3,10 @@ package org.tronder.words.repository;
 import org.springframework.data.repository.CrudRepository;
 import org.tronder.words.model.Dialect;
 
+import java.util.List;
+
 public interface DialectRepository extends CrudRepository<Dialect, Integer> {
 
-    Iterable<Dialect> findAllByPublicDialectIsTrue();
-    Iterable<Dialect> findAllByPublicDialectIsTrueOrCreatedByEquals(String createdBy);
-
+    List<Dialect> findAllByPublicDialectIsTrue();
+    List<Dialect> findAllByPublicDialectIsTrueOrCreatedByEquals(String createdBy);
 }

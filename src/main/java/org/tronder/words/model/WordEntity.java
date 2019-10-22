@@ -27,9 +27,10 @@ public class WordEntity implements Serializable {
 
     }
 
-    public WordEntity(int id, String wordText) {
+    public WordEntity(int id, String wordText, String translation) {
         this.id = id;
         this.wordText = wordText;
+        this.translation = translation;
     }
 
     public String getWordText() {

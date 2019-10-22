@@ -27,34 +27,37 @@ public class DialectService {
         return dialectRepository.save(dialect);
     }
 
-    public WordEntity addWordToDialect(int dialectId, WordEntity word) {
-        Dialect dialect = getDialectById(dialectId);
+    public WordEntity addWordToDialect(int dialectId, WordEntity word, String userSub) {
+        Dialect dialect = getPublicOrUserDialectById(dialectId, userSub);
         wordRepository.save(word);
         dialect.addWord(word);
         dialectRepository.save(dialect);
         return word;
     }
 
-    public List<WordEntity> getWordsInDialect(int dialectId) {
-        return getDialectById(dialectId).getWords();
+    public List<WordEntity> getWordsInDialectNoAuth(int dialectId) {
+        return getWordsInDialect(dialectId, "");
     }
 
-    public Iterable<Dialect> getDialects() {
-        return dialectRepository.findAll();
+    public List<WordEntity> getWordsInDialect(int dialectId, String userSub) {
+        return getPublicOrUserDialectById(dialectId, userSub).getWords();
     }
 
-    public Iterable<Dialect> getPublicDialects() {
+    public List<Dialect> getPublicDialects() {
         return dialectRepository.findAllByPublicDialectIsTrue();
     }
 
-    public Iterable<Dialect> getPublicAndUserDialects(String userSub) {
+    public List<Dialect> getPublicAndUserDialects(String userSub) {
         return dialectRepository.findAllByPublicDialectIsTrueOrCreatedByEquals(userSub);
     }
 
-    private Dialect getDialectById(int dialectId) {
+    private Dialect getPublicOrUserDialectById(int dialectId, String userSub) {
         Optional<Dialect> hasDialect = dialectRepository.findById(dialectId);
         if (hasDialect.isPresent()) {
-            return hasDialect.get();
+            Dialect dialect = hasDialect.get();
+            if (dialect.isPublicDialect() || dialect.getCreatedBy().equals(userSub)) {
+               return dialect;
+            }
         }
         throw new NotFoundError();
     }
