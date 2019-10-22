@@ -1,11 +1,13 @@
 package org.tronder.words.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Entity
 public class Dialect {
@@ -18,7 +20,7 @@ public class Dialect {
     private String displayName;
 
     @OneToMany
-    private List<WordEntity> words;
+    private List<WordEntity> words = new ArrayList<>();
 
     @NotNull
     private String createdBy;
@@ -69,6 +71,11 @@ public class Dialect {
 
     public void addWord(WordEntity word) {
         this.words.add(word);
+    }
+
+    @JsonSerialize
+    public int numWords() {
+        return words.size();
     }
 
     @JsonIgnore
