@@ -43,6 +43,14 @@ public class DialectService {
         return dialectRepository.findAll();
     }
 
+    public Iterable<Dialect> getPublicDialects() {
+        return dialectRepository.findAllByPublicDialectIsTrue();
+    }
+
+    public Iterable<Dialect> getPublicAndUserDialects(String userSub) {
+        return dialectRepository.findAllByPublicDialectIsTrueOrCreatedByEquals(userSub);
+    }
+
     private Dialect getDialectById(int dialectId) {
         Optional<Dialect> hasDialect = dialectRepository.findById(dialectId);
         if (hasDialect.isPresent()) {

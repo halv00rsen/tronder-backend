@@ -2,11 +2,7 @@ package org.tronder.words.model;
 
 import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -24,7 +20,36 @@ public class Dialect {
     @OneToMany
     private List<WordEntity> words;
 
+    @NotNull
+    private String createdBy;
+
+    @Column(columnDefinition = "boolean default false")
+    private boolean publicDialect;
+
     private String description;
+
+
+    public Dialect(int id, @NotNull String displayName, List<WordEntity> words, @NotNull String createdBy, boolean publicDialect, String description) {
+        this.id = id;
+        this.displayName = displayName;
+        this.words = words;
+        this.createdBy = createdBy;
+        this.publicDialect = publicDialect;
+        this.description = description;
+    }
+
+    public Dialect() {
+
+    }
+
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
 
     public int getId() {
         return id;
@@ -63,15 +88,11 @@ public class Dialect {
         this.description = description;
     }
 
-    public Dialect(int id, @NotNull String displayName, List<WordEntity> words, String description) {
-        this.id = id;
-        this.displayName = displayName;
-        this.words = words;
-        this.description = description;
+    public boolean isPublicDialect() {
+        return publicDialect;
     }
 
-    public Dialect() {
-
+    public void setPublicDialect(boolean publicDialect) {
+        this.publicDialect = publicDialect;
     }
-
 }

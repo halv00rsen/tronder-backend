@@ -17,9 +17,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.Serializable;
 
 @Component
-public class JwtRequestFilter extends OncePerRequestFilter {
+public class JwtRequestFilter extends OncePerRequestFilter implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Autowired
     private RoleRepository roleRepository;
@@ -35,9 +38,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         final String requestTokenHeader = request.getHeader("Authorization");
 
+        Authentication auth = null;
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             String jwtToken = requestTokenHeader.substring(7);
-            Authentication auth = null;
             try {
                 UserData userData = jwtParser.parseTokenToData(jwtToken);
                 auth = new UsernamePasswordAuthenticationToken(userData, null, roleRepository.findAll());
@@ -45,10 +48,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 throw new NotAuthenticatedException("Something is wrong with the JWT token. Is it an id token?");
             } catch (ExpiredJwtException ejw) {
                 throw new NotAuthenticatedException("The token has expired.");
-            } finally {
-                authenticationUtil.setCurrentAuthentication(auth);
             }
         }
+        authenticationUtil.setCurrentAuthentication(auth);
         filterChain.doFilter(request, response);
     }
 }

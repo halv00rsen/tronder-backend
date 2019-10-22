@@ -1,10 +1,9 @@
 package org.tronder.words.controller;
 
-import java.security.Principal;
+import java.io.Serializable;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,13 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.tronder.words.dataAccessObject.DialectDTO;
 import org.tronder.words.dataAccessObject.WordDTO;
 import org.tronder.words.model.Dialect;
-import org.tronder.words.model.UserData;
 import org.tronder.words.model.WordEntity;
 import org.tronder.words.service.DialectService;
+import org.tronder.words.utils.AuthenticationUtil;
 
 @RestController
 @RequestMapping("/dialect")
-public class DialectController {
+public class DialectController implements Serializable {
 
     private final DialectService dialectService;
 
@@ -31,15 +30,21 @@ public class DialectController {
 
 
     @GetMapping("")
-    public Iterable<Dialect> getAllDialects(Authentication auth) {
-        return dialectService.getDialects();
+    public Iterable<Dialect> getAllDialects(AuthenticationUtil auth) {
+        if (auth.isAuthenticated()) {
+            return dialectService.getPublicAndUserDialects(auth.getUserData().getSub());
+        } else {
+            return dialectService.getPublicDialects();
+        }
     }
 
     @PostMapping("")
-    public Dialect addDialect(@RequestBody DialectDTO dialectDTO) {
+    public Dialect addDialect(@RequestBody DialectDTO dialectDTO, AuthenticationUtil auth) {
         Dialect dialect = new Dialect();
         dialect.setDescription(dialectDTO.getDescription());
         dialect.setDisplayName(dialectDTO.getDisplayName());
+        dialect.setPublicDialect(dialectDTO.isPublicDialect());
+        dialect.setCreatedBy(auth.getUserData().getSub());
         return dialectService.addDialect(dialect);
     }
 
@@ -55,10 +60,6 @@ public class DialectController {
         wordEntity.setTranslation(word.getTranslation());
         wordEntity.setWordText(word.getWordText());
         return dialectService.addWordToDialect(dialectId, wordEntity);
-    }
-
-    private UserData getUserData(Authentication auth) {
-        return (UserData) auth.getPrincipal();
     }
 
 }

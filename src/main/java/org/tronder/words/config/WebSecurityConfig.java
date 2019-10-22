@@ -1,6 +1,7 @@
 package org.tronder.words.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -25,13 +26,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
             .antMatchers("/user/**").hasAuthority("ADMIN");
 
-//        http.authorizeRequests()
-//            .antMatchers(HttpMethod.GET,
-//                "/word",
-//                "/dialect/**"
-//            ).permitAll();
-//        http.authorizeRequests()
-//            .antMatchers(HttpMethod.POST, "/username").permitAll();
+        http.authorizeRequests()
+                .antMatchers(HttpMethod.GET, "/dialect/**").permitAll();
         http.authorizeRequests().antMatchers("/dialect/**")
                 .hasAuthority("ROLE_USER");
         http.authorizeRequests().anyRequest()
