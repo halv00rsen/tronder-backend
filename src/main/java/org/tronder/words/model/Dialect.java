@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.tronder.words.errors.BadRequestException;
 
 @Entity
 public class Dialect {
@@ -33,11 +34,11 @@ public class Dialect {
 
     public Dialect(int id, @NotNull String displayName, List<WordEntity> words, @NotNull String createdBy, boolean publicDialect, String description) {
         this.id = id;
-        this.displayName = displayName;
         this.words = words;
         this.createdBy = createdBy;
         this.publicDialect = publicDialect;
-        this.description = description;
+        setDisplayName(displayName);
+        setDescription(description);
     }
 
     public Dialect() {
@@ -66,6 +67,10 @@ public class Dialect {
     }
 
     public void setDisplayName(String displayName) {
+        displayName = displayName.trim();
+        if (displayName.length() == 0) {
+            throw new BadRequestException("Display name for dialect must not be zero");
+        }
         this.displayName = displayName;
     }
 
@@ -92,7 +97,7 @@ public class Dialect {
     }
 
     public void setDescription(String description) {
-        this.description = description;
+        this.description = description.trim();
     }
 
     public boolean isPublicDialect() {

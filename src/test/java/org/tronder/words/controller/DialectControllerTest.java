@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.tronder.words.dataAccessObject.DialectDTO;
 import org.tronder.words.dataAccessObject.WordDTO;
+import org.tronder.words.errors.BadRequestException;
 import org.tronder.words.model.Dialect;
 import org.tronder.words.model.Role;
 import org.tronder.words.model.UserData;
@@ -61,7 +62,7 @@ public class DialectControllerTest {
     private RoleRepository roleRepository;
 
     private Dialect dialect;
-    private DialectDTO dialectDTO = new DialectDTO("displayName", "some description", true);
+    private DialectDTO dialectDTO;
     private UserData userData;
     private Role role;
     private WordEntity word;
@@ -70,6 +71,7 @@ public class DialectControllerTest {
 
     @Before
     public void init() {
+        dialectDTO = new DialectDTO("displayName", "some description", true);
         role = new Role();
         role.setAuthority("USER");
         dialect = new Dialect();
@@ -132,6 +134,16 @@ public class DialectControllerTest {
                 .andExpect(jsonPath("$[0].description", is(word.getDescription())))
                 .andExpect(jsonPath("$[0].translation", is(word.getTranslation())));
     }
+
+    @Test
+    public void testSetEmptyDialectName() throws Exception {
+        dialectDTO.setDisplayName("   ");
+        mockMvc.perform(
+                post("/dialect").session(generateAuthSession())
+                .content(asJsonString(dialectDTO)).contentType(MediaType.APPLICATION_JSON_UTF8)
+        ).andExpect(status().isBadRequest());
+    }
+
 
     @Test
     public void testGetWordsInDialectWithAuth() throws Exception {

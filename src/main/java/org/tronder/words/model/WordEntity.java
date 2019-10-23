@@ -1,5 +1,7 @@
 package org.tronder.words.model;
 
+import org.tronder.words.errors.BadRequestException;
+
 import java.io.Serializable;
 
 import javax.persistence.Entity;
@@ -38,8 +40,9 @@ public class WordEntity implements Serializable {
     }
 
     public void setWordText(String wordText) {
+        wordText = wordText.trim();
         if (wordText.length() == 0) {
-            throw new IllegalArgumentException("The word must not be empty.");
+            throw new BadRequestException("New word must not be empty");
         }
         this.wordText = wordText;
     }
@@ -57,10 +60,10 @@ public class WordEntity implements Serializable {
     }
 
     public void setDescription(String description) {
-        this.description = description;
+        this.description = description.trim();
     }
 
     public void setTranslation(String translation) {
-        this.translation = translation;
+        this.translation = translation.trim();
     }
 }

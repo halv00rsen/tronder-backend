@@ -21,6 +21,10 @@ public class DialectDTO {
         this.publicDialect = publicDialect;
     }
 
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
     public String getDescription() {
         return description;
     }
