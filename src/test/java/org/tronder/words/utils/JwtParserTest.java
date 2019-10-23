@@ -1,12 +1,10 @@
-package org.tronder.backend.utils;
+package org.tronder.words.utils;
 
 import io.jsonwebtoken.Claims;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.tronder.words.utils.JwtParser;
-import org.tronder.words.utils.SigningKeyResolver;
 
 public class JwtParserTest {
 

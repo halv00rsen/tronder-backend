@@ -1,4 +1,4 @@
-package org.tronder.backend;
+package org.tronder.words;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

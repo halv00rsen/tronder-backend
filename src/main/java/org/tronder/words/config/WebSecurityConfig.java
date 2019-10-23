@@ -23,20 +23,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.authorizeRequests()
-            .antMatchers("/user/**").hasAuthority("ADMIN");
 
         http.authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/dialect/**").permitAll();
-        http.authorizeRequests().antMatchers("/dialect/**")
-                .hasAuthority("ROLE_USER");
-        http.authorizeRequests().anyRequest()
-            .authenticated();
+                .antMatchers(HttpMethod.GET, "/dialect/**")
+                    .permitAll()
+                .antMatchers("/dialect/**")
+                    .hasAuthority("ROLE_USER")
+                .anyRequest()
+                    .authenticated()
+                    .and()
+                    .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
-        http.csrf().disable();
-        http.cors();
+        http.csrf().disable().cors();
 
-        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+//        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Autowired

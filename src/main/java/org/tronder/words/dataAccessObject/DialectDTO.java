@@ -11,6 +11,16 @@ public class DialectDTO {
 
     private boolean publicDialect = false;
 
+    public DialectDTO() {
+
+    }
+
+    public DialectDTO(@NotNull String displayName, @NotNull String description, boolean publicDialect) {
+        this.displayName = displayName;
+        this.description = description;
+        this.publicDialect = publicDialect;
+    }
+
     public String getDescription() {
         return description;
     }

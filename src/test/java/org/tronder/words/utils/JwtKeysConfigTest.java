@@ -1,9 +1,7 @@
-package org.tronder.backend.utils;
+package org.tronder.words.utils;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
-import org.tronder.words.utils.JwtKeysConfig;
 
 import java.util.List;
 import java.util.Map;
