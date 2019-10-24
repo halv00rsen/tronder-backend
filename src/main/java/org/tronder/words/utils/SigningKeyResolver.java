@@ -31,22 +31,28 @@ public class SigningKeyResolver extends SigningKeyResolverAdapter implements Ser
     }
 
     private PublicKey generatePublicKey(String codedModulus, String codedExponent) {
-        byte[] decodedModulus = Base64.getUrlDecoder().decode(codedModulus);
-        byte[] decodedExponent = Base64.getUrlDecoder().decode(codedExponent);
+        byte[] decodedModulus = decodeBase64String(codedModulus);
+        byte[] decodedExponent = decodeBase64String(codedExponent);
 
         BigInteger modulus = new BigInteger(1, decodedModulus);
         BigInteger exponent = new BigInteger(1, decodedExponent);
 
-        RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(modulus, exponent);
-        KeyFactory keyFactory;
+        return generatePublicKey(new RSAPublicKeySpec(modulus, exponent));
+    }
 
+    private PublicKey generatePublicKey(RSAPublicKeySpec rsaPublicKeySpec) {
+        KeyFactory keyFactory;
         try {
             keyFactory = KeyFactory.getInstance("RSA");
-            return keyFactory.generatePublic(publicKeySpec);
+            return keyFactory.generatePublic(rsaPublicKeySpec);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             e.printStackTrace();
             throw new IllegalArgumentException("Could not process the jwt token");
         }
+    }
+
+    private byte[] decodeBase64String(String string) {
+        return Base64.getUrlDecoder().decode(string);
     }
 
     @Override
