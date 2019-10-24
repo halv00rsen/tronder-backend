@@ -2,6 +2,7 @@ package org.tronder.words.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SigningKeyResolverAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.tronder.words.model.UserData;
@@ -9,10 +10,10 @@ import org.tronder.words.model.UserData;
 @Component
 public class JwtParser {
 
-    private final SigningKeyResolver signingKeyResolver;
+    private final SigningKeyResolverAdapter signingKeyResolver;
 
     @Autowired
-    public JwtParser(SigningKeyResolver signingKeyResolver) {
+    public JwtParser(SigningKeyResolverAdapter signingKeyResolver) {
         this.signingKeyResolver = signingKeyResolver;
     }
 

@@ -25,14 +25,14 @@ public class SigningKeyResolver extends SigningKeyResolverAdapter implements Ser
 
     @Autowired
     public SigningKeyResolver(JwtKeysConfig keysConfig) {
-        keysConfig.getKeysAndModulus().forEach(keyMap -> {
-            keys.put(keyMap.get("key"), generatePublicKey(keyMap.get("modulus")));
+        keysConfig.getKeyModulusExponent().forEach(keyMap -> {
+            keys.put(keyMap.get("key"), generatePublicKey(keyMap.get("modulus"), keyMap.get("exponent")));
         });
     }
 
-    private PublicKey generatePublicKey(String codedModulus) {
+    private PublicKey generatePublicKey(String codedModulus, String codedExponent) {
         byte[] decodedModulus = Base64.getUrlDecoder().decode(codedModulus);
-        byte[] decodedExponent = Base64.getUrlDecoder().decode("AQAB");
+        byte[] decodedExponent = Base64.getUrlDecoder().decode(codedExponent);
 
         BigInteger modulus = new BigInteger(1, decodedModulus);
         BigInteger exponent = new BigInteger(1, decodedExponent);
