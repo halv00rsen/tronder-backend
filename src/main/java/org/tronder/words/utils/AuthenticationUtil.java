@@ -3,6 +3,7 @@ package org.tronder.words.utils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.tronder.words.errors.NotAuthenticatedException;
 import org.tronder.words.model.UserData;
 
 import java.io.Serializable;
@@ -14,10 +15,10 @@ public class AuthenticationUtil implements Serializable {
 
     public boolean isAuthenticated() {
         Authentication auth = getCurrentAuthentication();
-        return auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser");
+        return auth != null && auth.isAuthenticated() && auth.getPrincipal() instanceof UserData;
     }
 
-    public Authentication getCurrentAuthentication() {
+    Authentication getCurrentAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
     }
 
@@ -26,6 +27,10 @@ public class AuthenticationUtil implements Serializable {
     }
 
     public UserData getUserData() {
-        return (UserData) getCurrentAuthentication().getPrincipal();
+        if (isAuthenticated()) {
+            return (UserData) getCurrentAuthentication().getPrincipal();
+        } else {
+            throw new NotAuthenticatedException("Not authenticated, cannot fetch user data");
+        }
     }
 }

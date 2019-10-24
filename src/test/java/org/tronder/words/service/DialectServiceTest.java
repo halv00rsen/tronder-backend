@@ -83,6 +83,21 @@ public class DialectServiceTest {
         checkAddWord(publicUser);
     }
 
+    @Test
+    public void testAddDialect() {
+        Mockito.when(dialectRepository.save(publicDialect)).thenReturn(publicDialect);
+        Dialect dialect = dialectService.addDialect(publicDialect);
+        assertEquals(dialect, publicDialect);
+    }
+
+    @Test
+    public void testGetPublicDialects() {
+        Mockito.when(dialectRepository.findAllByPublicDialectIsTrueOrCreatedByEquals(Mockito.anyString())).thenReturn(Arrays.asList(publicDialect));
+        List<Dialect> dialects = dialectService.getPublicAndUserDialects("some user");
+        assertThat(dialects.size(), is(1));
+        assertTrue(dialects.get(0).isPublicDialect());
+    }
+
     private void checkAddWord(String userSub) {
         WordEntity word = dialectService.addWordToDialect(publicDialect.getId(), wordTwoPrivate, userSub);
         assertThat(word.getId(), is(wordTwoPrivate.getId()));

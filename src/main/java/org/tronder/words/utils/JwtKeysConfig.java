@@ -8,6 +8,7 @@ import java.util.*;
 @Configuration
 public class JwtKeysConfig {
 
+
     @Value("${jwt.keys.one.modulus}")
     private String codedModulusOne;
 
