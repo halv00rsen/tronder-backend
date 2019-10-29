@@ -1,7 +1,9 @@
 package org.tronder.words.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -31,12 +33,16 @@ public class Dialect {
 
     private String description;
 
+    @ManyToMany
+    private Set<Hallmark> hallmarks = new HashSet<>();
 
-    public Dialect(int id, @NotNull String displayName, List<WordEntity> words, @NotNull String createdBy, boolean publicDialect, String description) {
+
+    public Dialect(int id, @NotNull String displayName, List<WordEntity> words, @NotNull String createdBy, boolean publicDialect, String description, Set<Hallmark> hallmarks) {
         this.id = id;
         this.words = words;
         this.createdBy = createdBy;
         this.publicDialect = publicDialect;
+        this.hallmarks = hallmarks;
         setDisplayName(displayName);
         setDescription(description);
     }
@@ -45,6 +51,21 @@ public class Dialect {
 
     }
 
+    @JsonIgnore
+    public Set<Hallmark> getHallmarksSet() {
+        return hallmarks;
+    }
+
+    @JsonSerialize
+    public List<String> getHallmarks() {
+        List<String> hallmarks = new ArrayList<>();
+        this.hallmarks.stream().forEach(hallmark -> hallmarks.add(hallmark.getHallmark()));
+        return hallmarks;
+    }
+
+    public void setHallmarks(Set<Hallmark> hallmarks) {
+        this.hallmarks = hallmarks;
+    }
 
     public String getCreatedBy() {
         return createdBy;

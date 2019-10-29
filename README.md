@@ -29,3 +29,8 @@ All user information the backend application uses, comes from the JWT-token sent
 ./mvnw test
 ```
 
+## Pushing
+When pushing to git, all tests are run by default. To avoid this behaviour:
+```bash
+git push --no-verify
+```

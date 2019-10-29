@@ -1,7 +1,9 @@
 package org.tronder.words.controller;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.tronder.words.dataAccessObject.DialectDTO;
 import org.tronder.words.dataAccessObject.WordDTO;
 import org.tronder.words.model.Dialect;
+import org.tronder.words.model.Hallmark;
 import org.tronder.words.model.WordEntity;
 import org.tronder.words.service.DialectService;
 import org.tronder.words.utils.AuthenticationUtil;
@@ -45,6 +48,7 @@ public class DialectController implements Serializable {
         dialect.setDisplayName(dialectDTO.getDisplayName());
         dialect.setPublicDialect(dialectDTO.isPublicDialect());
         dialect.setCreatedBy(auth.getUserData().getSub());
+        dialect.setHallmarks(deserializeHallmarks(dialectDTO.getHallmarks()));
         return dialectService.addDialect(dialect);
     }
 
@@ -64,6 +68,14 @@ public class DialectController implements Serializable {
         wordEntity.setTranslation(word.getTranslation());
         wordEntity.setWordText(word.getWordText());
         return dialectService.addWordToDialect(dialectId, wordEntity, auth.getUserData().getSub());
+    }
+
+    private Set<Hallmark> deserializeHallmarks(List<String> hallmarks) {
+        HashSet<Hallmark> hallmarkSet = new HashSet<>();
+        for (String hallmark : hallmarks) {
+            hallmarkSet.add(new Hallmark(hallmark));
+        }
+        return hallmarkSet;
     }
 
 }

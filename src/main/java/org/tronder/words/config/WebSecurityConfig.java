@@ -25,7 +25,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
         http.authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/dialect/**")
+                .antMatchers(HttpMethod.GET,
+                        "/dialect/**",
+                        "/hallmark/**")
                     .permitAll()
                 .antMatchers("/dialect/**")
                     .hasAuthority("ROLE_USER")

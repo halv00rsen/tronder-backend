@@ -35,22 +35,31 @@ public class JwtRequestFilter extends OncePerRequestFilter implements Serializab
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
-        final String requestTokenHeader = request.getHeader("Authorization");
+        final String requestTokenHeader = getAuthHeader(request);
 
         Authentication auth = null;
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             String jwtToken = requestTokenHeader.substring(7);
-            try {
-                UserData userData = jwtParser.parseTokenToData(jwtToken);
-                auth = new UsernamePasswordAuthenticationToken(userData, null, roleRepository.findAll());
-            } catch (IllegalArgumentException e) {
-                throw new NotAuthenticatedException("Something is wrong with the JWT token. Is it an id token?");
-            } catch (ExpiredJwtException ejw) {
-                throw new NotAuthenticatedException("The token has expired.");
-            }
+            auth = getAuthToken(jwtToken);
         }
         authenticationUtil.setCurrentAuthentication(auth);
         filterChain.doFilter(request, response);
+    }
+
+    private String getAuthHeader(HttpServletRequest request) {
+        return request.getHeader("Authorization");
+    }
+
+    private UsernamePasswordAuthenticationToken getAuthToken(String jwtToken) {
+        try {
+            UserData userData = jwtParser.parseTokenToData(jwtToken);
+            return new UsernamePasswordAuthenticationToken(userData, null, roleRepository.findAll());
+        } catch (IllegalArgumentException e) {
+            throw new NotAuthenticatedException("Something is wrong with the JWT token. Is it an id token?");
+        } catch (ExpiredJwtException ejw) {
+            throw new NotAuthenticatedException("The token has expired.");
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

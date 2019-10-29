@@ -16,14 +16,20 @@ public class DialectService {
 
     private final DialectRepository dialectRepository;
     private final WordRepository wordRepository;
+    private final HallmarkService hallmarkService;
 
     @Autowired
-    public DialectService(DialectRepository dialectRepository, WordRepository wordRepository) {
+    public DialectService(
+            DialectRepository dialectRepository,
+            WordRepository wordRepository,
+            HallmarkService hallmarkService) {
         this.dialectRepository = dialectRepository;
         this.wordRepository = wordRepository;
+        this.hallmarkService = hallmarkService;
     }
 
     public Dialect addDialect(Dialect dialect) {
+        hallmarkService.saveHallmarks(dialect.getHallmarksSet());
         return dialectRepository.save(dialect);
     }
 
