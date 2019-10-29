@@ -24,6 +24,17 @@ All user information the backend application uses, comes from the JWT-token sent
 ./mvnw spring-boot:run
 ```
 
+## Docker
+### Create Docker image
+```bash
+docker image build . -t tronder-backend:<version>
+```
+
+### Run Docker image
+```bash
+docker run --env-file=env-file --network host tronder-backend:latest
+```
+
 ## Running tests
 ```bash
 ./mvnw test
