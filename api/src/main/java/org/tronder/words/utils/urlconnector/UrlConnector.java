@@ -17,10 +17,14 @@ public class UrlConnector<T> {
     private final HttpURLConnection connection;
 
 
-    public UrlConnector(String url) throws IOException {
-        URL urlInstance = new URL(url);
-        connection = (HttpURLConnection) urlInstance.openConnection();
-        connection.setRequestMethod("GET");
+    public UrlConnector(String url) throws UrlConnectorException {
+        try {
+            URL urlInstance = new URL(url);
+            connection = (HttpURLConnection) urlInstance.openConnection();
+            connection.setRequestMethod("GET");
+        } catch (IOException e) {
+            throw new UrlConnectorException("Could not create url connector instance");
+        }
     }
 
 

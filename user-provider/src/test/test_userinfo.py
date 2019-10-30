@@ -32,5 +32,18 @@ def test_valid_request(client):
     assert response.status_code == 200
     data = loads(response.data)
     assert isinstance(data, dict)
-    assert "info" in data
-    assert data["info"] == "some-sub"
+    assert "sub" in data
+    assert data["sub"] == "some-sub"
+
+
+def test_valid_response(client):
+    response = client.post(URL, json={
+        "sub": "some-sub"
+    })
+    data = loads(response.data)
+    validate_values(data, "name", "email", "sub")
+
+
+def validate_values(data, *keys):
+    for key in keys:
+        assert key in data and isinstance(data[key], str)

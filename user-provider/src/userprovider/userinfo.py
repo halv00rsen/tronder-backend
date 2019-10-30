@@ -1,5 +1,8 @@
 
 from flask import Flask, Blueprint, request, jsonify, abort
+
+import userprovider.cognito as cognito
+
 userinfo = Blueprint('userinfo', __name__, url_prefix="/userinfo")
 
 def is_valid_json(json):
@@ -15,9 +18,7 @@ def get_user_info():
     if data is None or not is_valid_json(data):
         abort(400)
     user_key = data["sub"]
-    return jsonify({
-        "info": user_key
-    })
+    return jsonify(cognito.get_user_info(user_key))
 
 
 @userinfo.errorhandler(404)
