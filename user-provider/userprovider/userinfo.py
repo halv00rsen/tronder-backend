@@ -1,5 +1,5 @@
 
-from flask import Flask, Blueprint, request, jsonify, abort
+from flask import Flask, Blueprint, request, jsonify, abort, Response
 
 import userprovider.cognito as cognito
 
@@ -17,18 +17,22 @@ def get_user_info():
     data = request.get_json(silent=True)
     if data is None or not is_valid_json(data):
         abort(400)
-    user_key = data["sub"]
-    return jsonify(cognito.get_user_info(user_key))
+    user_info = cognito.get_user_info(data["sub"])
+    if user_info is None:
+        abort(404, "sub not found")
+    else:
+        return jsonify(user_info)
 
 
 @userinfo.errorhandler(404)
 def path_not_found(error):
     return jsonify({
-        "error": "page not found"
+        "error": str(error)
     }), 404
+
 
 @userinfo.errorhandler(400)
 def error_input_json(error):
     return jsonify({
-        "error": "user data provided are on wrong format"
+        "error": str(error)
     }), 400

@@ -1,6 +1,8 @@
 
 from json import loads
+
 from userprovider.userinfo import is_valid_json
+import userprovider.cognito as cognito
 
 URL = "/userinfo/"
 
@@ -25,10 +27,15 @@ def test_invalid_json(client):
     }).status_code == 400
 
 
-def test_valid_request(client):
-    response = client.post(URL, json={
-        "sub": "some-sub"
-    })
+def test_valid_request(client, mocker):
+    mock_data = {"sub": "some-sub"}
+
+    mocker.patch.object(cognito, "get_user_info")
+    cognito.get_user_info.return_value = mock_data
+
+    response = client.post(URL, json=mock_data)
+    cognito.get_user_info.assert_called_with(mock_data["sub"])
+
     assert response.status_code == 200
     data = loads(response.data)
     assert isinstance(data, dict)
@@ -36,12 +43,26 @@ def test_valid_request(client):
     assert data["sub"] == "some-sub"
 
 
-def test_valid_response(client):
-    response = client.post(URL, json={
-        "sub": "some-sub"
-    })
+def test_valid_response(client, mocker):
+    mock_data = {
+        "sub": "some-sub",
+        "name": "some name",
+        "email": "some-mail"
+    }
+    mocker.patch.object(cognito, "get_user_info")
+    cognito.get_user_info.return_value = mock_data
+
+    response = client.post(URL, json=mock_data)
+
     data = loads(response.data)
     validate_values(data, "name", "email", "sub")
+
+
+def test_invalid_sub(client, mocker):
+    mocker.patch.object(cognito, "get_user_info")
+    cognito.get_user_info.return_value = None
+    response = client.post(URL, json={"sub": "some-sub"})
+    assert response.status_code == 404
 
 
 def validate_values(data, *keys):
