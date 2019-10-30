@@ -1,6 +1,8 @@
 
 from json import loads
-from userprovider.index import is_valid_json
+from userprovider.userinfo import is_valid_json
+
+URL = "/userinfo/"
 
 def test_valid_json():
     assert not is_valid_json({"someKey": "some value"})
@@ -8,17 +10,23 @@ def test_valid_json():
     assert is_valid_json({"sub": "some-sub-value"})
 
 
-def test_get_user_info(client):
-    url = "/userinfo/"
-    assert client.get("/userinfo").status_code == 308
-    assert client.get(url).status_code == 400
-    assert client.get(url, json={
+def test_error_status_codes(client):
+    assert client.get(URL).status_code == 405
+    assert client.post("/userinfo").status_code == 308
+    assert client.post(URL).status_code == 400
+
+
+def test_invalid_json(client):
+    assert client.post(URL, json={
         "someKey": "someValue"
     }).status_code == 400
-    assert client.get(url, json={
+    assert client.post(URL, json={
         "sub": 1
     }).status_code == 400
-    response = client.get(url, json={
+
+
+def test_valid_request(client):
+    response = client.post(URL, json={
         "sub": "some-sub"
     })
     assert response.status_code == 200

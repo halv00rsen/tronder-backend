@@ -9,7 +9,7 @@ def is_valid_json(json):
         return True
 
 
-@userinfo.route("/", methods=["GET"])
+@userinfo.route("/", methods=["POST"])
 def get_user_info():
     data = request.get_json(silent=True)
     if data is None or not is_valid_json(data):

@@ -1,0 +1,2 @@
+export FLASK_APP=userprovider
+export FLASK_ENV=development
