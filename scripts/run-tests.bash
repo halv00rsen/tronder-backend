@@ -8,11 +8,22 @@ set -e
 # thanks to it we can just enter `./scripts/run-tests.bash`
 cd "${0%/*}/../api"
 
-# let's fake failing test for now 
-echo "Running tests"
+echo "Running API tests"
 echo "............................" 
 
 ./mvnw test
+
+echo "............................"
+echo "API tests finished successful"
+
+echo "Running user provider tests"
+echo "............................"
+
+cd "../user-provider"
+source venv/bin/activate
+pytest
+
+echo "............................"
 
 echo "All tests have passed"
 
