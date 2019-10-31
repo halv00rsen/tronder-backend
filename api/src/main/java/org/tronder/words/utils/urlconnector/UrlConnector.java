@@ -7,14 +7,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class UrlConnector<T> {
 
     public static final int STATUS_OK = 200;
 
-    private final HttpURLConnection connection;
+    private HttpURLConnection connection;
 
 
     public UrlConnector(String url) throws UrlConnectorException {
@@ -44,7 +44,7 @@ public class UrlConnector<T> {
 
     private void writeDataToBody(String data) throws IOException {
         OutputStream outputStream = connection.getOutputStream();
-        OutputStreamWriter writer = new OutputStreamWriter(outputStream, "UTF-8");
+        OutputStreamWriter writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
         writer.write(data);
         writer.flush();
         writer.close();
@@ -52,13 +52,25 @@ public class UrlConnector<T> {
     }
 
 
-    public T getDataFromBody() throws IOException {
+    public T getDataFromBody(TypeReference<T> typeReference) throws IOException {
+        checkValidResponse();
+        T data = getSuccessData(typeReference);
+        connection.disconnect();
+        return data;
+    }
+
+
+    public T getDataFromBody(Class<T> className) throws IOException {
+        checkValidResponse();
+        T data = getSuccessData(className);
+        connection.disconnect();
+        return data;
+    }
+
+
+    private void checkValidResponse() throws IOException {
         int responseCode = connectAndGetResponseCode();
-        if (isResponseOk(responseCode)) {
-            T data = getSuccessData();
-            connection.disconnect();
-            return data;
-        } else {
+        if (!isResponseOk(responseCode)) {
             Map<String, String> errors = getErrors();
             connection.disconnect();
             throw new UrlConnectorException(errors);
@@ -66,9 +78,15 @@ public class UrlConnector<T> {
     }
 
 
-    private T getSuccessData() throws IOException {
+    private T getSuccessData(TypeReference<T> typeReference) throws IOException {
         InputStream inputStream = connection.getInputStream();
-        return new ObjectMapper().readValue(inputStream, new TypeReference<T>() {});
+        return new ObjectMapper().readValue(inputStream, typeReference);
+    }
+
+
+    private T getSuccessData(Class<T> className) throws IOException {
+        InputStream inputStream = connection.getInputStream();
+        return new ObjectMapper().readValue(inputStream, className);
     }
 
 
@@ -88,11 +106,4 @@ public class UrlConnector<T> {
         return connection.getResponseCode();
     }
 
-    public static void main(String[] args) throws IOException {
-        UrlConnector connector = new UrlConnector<Map<String, String>>("http://localhost:5000/userinfo/");
-        Map<String, String> map = new HashMap<>();
-        map.put("sub", "some-sub");
-        connector.setJsonData(map);
-        System.out.println(connector.getDataFromBody());
-    }
 }
