@@ -34,6 +34,9 @@ public class DialectServiceTest {
     @MockBean
     private HallmarkService hallmarkService;
 
+    @MockBean
+    private UserService userService;
+
     private DialectService dialectService;
 
     private WordEntity wordOnePublic;
@@ -44,7 +47,7 @@ public class DialectServiceTest {
     @Before
     public void setup() {
         Set<Hallmark> hallmarks = new HashSet<>();
-        dialectService = new DialectService(dialectRepository, wordRepository, hallmarkService);
+        dialectService = new DialectService(dialectRepository, wordRepository, hallmarkService, userService);
         wordOnePublic = new WordEntity(1, "This is word", "This is translation");
         wordTwoPrivate = new WordEntity(2, "Another word", "Another translation");
         publicDialect = new Dialect(

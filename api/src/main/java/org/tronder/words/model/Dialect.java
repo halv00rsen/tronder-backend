@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.tronder.words.dataAccessObject.UserProviderDTO;
 import org.tronder.words.errors.BadRequestException;
 
 @Entity
@@ -35,6 +36,9 @@ public class Dialect {
 
     @ManyToMany
     private Set<Hallmark> hallmarks = new HashSet<>();
+
+    @Transient
+    private UserProviderDTO userProviderDTO;
 
 
     public Dialect(int id, @NotNull String displayName, List<WordEntity> words, @NotNull String createdBy, boolean publicDialect, String description, Set<Hallmark> hallmarks) {
@@ -65,6 +69,16 @@ public class Dialect {
 
     public void setHallmarks(Set<Hallmark> hallmarks) {
         this.hallmarks = hallmarks;
+    }
+
+    @JsonSerialize
+    private UserProviderDTO getUserInfo() {
+        return userProviderDTO;
+    }
+
+    @JsonIgnore
+    public void setUserProviderDTO(UserProviderDTO userProviderDTO) {
+        this.userProviderDTO = userProviderDTO;
     }
 
     public String getCreatedBy() {

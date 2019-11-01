@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class UrlConnector<T> {
 
-    public static final int STATUS_OK = 200;
+    private static final int STATUS_OK = 200;
 
     private HttpURLConnection connection;
 

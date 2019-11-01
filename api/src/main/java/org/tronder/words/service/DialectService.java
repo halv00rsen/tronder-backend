@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.tronder.words.errors.NotFoundError;
+import org.tronder.words.errors.UserNotFoundException;
 import org.tronder.words.model.Dialect;
 import org.tronder.words.model.WordEntity;
 import org.tronder.words.repository.DialectRepository;
@@ -17,15 +18,19 @@ public class DialectService {
     private final DialectRepository dialectRepository;
     private final WordRepository wordRepository;
     private final HallmarkService hallmarkService;
+    private final UserService userService;
 
     @Autowired
     public DialectService(
             DialectRepository dialectRepository,
             WordRepository wordRepository,
-            HallmarkService hallmarkService) {
+            HallmarkService hallmarkService,
+            UserService userService
+    ) {
         this.dialectRepository = dialectRepository;
         this.wordRepository = wordRepository;
         this.hallmarkService = hallmarkService;
+        this.userService = userService;
     }
 
     public Dialect addDialect(Dialect dialect) {
@@ -50,12 +55,28 @@ public class DialectService {
     }
 
     public List<Dialect> getPublicDialects() {
-        return dialectRepository.findAllByPublicDialectIsTrue();
+        List<Dialect> dialects = dialectRepository.findAllByPublicDialectIsTrue();
+        setUserInfoDialects(dialects);
+        return dialects;
     }
 
+
     public List<Dialect> getPublicAndUserDialects(String userSub) {
-        return dialectRepository.findAllByPublicDialectIsTrueOrCreatedByEquals(userSub);
+        List<Dialect> dialects = dialectRepository.findAllByPublicDialectIsTrueOrCreatedByEquals(userSub);
+        setUserInfoDialects(dialects);
+        return dialects;
     }
+
+
+    private void setUserInfoDialects(List<Dialect> dialects) {
+        for (Dialect dialect : dialects) {
+            try {
+                dialect.setUserProviderDTO(userService.getUserInfo(dialect.getCreatedBy()));
+            } catch (UserNotFoundException e) {
+            }
+        }
+    }
+
 
     private Dialect getPublicOrUserDialectById(int dialectId, String userSub) {
         Optional<Dialect> hasDialect = dialectRepository.findById(dialectId);
