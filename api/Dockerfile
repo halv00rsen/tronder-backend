@@ -1,7 +1,6 @@
-FROM rtfpessoa/ubuntu-jdk8
+FROM ubuntu:latest
 
-RUN apt-get update && \
-    apt-get install maven -y
+RUN apt-get update && apt-get install default-jre -y && apt-get install maven -y
 
 
 WORKDIR /src

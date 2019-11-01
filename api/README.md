@@ -30,6 +30,16 @@ All user information the backend application uses, comes from the JWT-token sent
 docker image build . -t tronder-backend:<version>
 ```
 
+### Export Docker image
+```bash
+docker save -o <path for generated tar file> <image name>
+```
+
+### Load Docker image tar
+```bash
+docker load -i <path to image tar file>
+```
+
 ### Run Docker image
 ```bash
 docker run --env-file=env-file --network host tronder-backend:latest
